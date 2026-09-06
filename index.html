@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#08090d">
+
+<title>Scrims Clicker — быстрый Windows автокликер</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --bg: #07080c;
+    --bg2: #0c0e14;
+    --card: rgba(255,255,255,.055);
+    --card-hover: rgba(255,255,255,.085);
+    --border: rgba(255,255,255,.09);
+    --text: #f7f8fb;
+    --muted: #969baa;
+    --accent: #7c5cff;
+    --accent2: #a98cff;
+    --green: #39e58c;
+    --red: #ff5571;
+    --shadow: 0 25px 80px rgba(0,0,0,.45);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Inter, Arial, sans-serif;
+    background:
+        radial-gradient(circle at 15% 15%, rgba(124,92,255,.17), transparent 30%),
+        radial-gradient(circle at 85% 20%, rgba(78,110,255,.11), transparent 28%),
+        radial-gradient(circle at 50% 80%, rgba(124,92,255,.08), transparent 35%),
+        var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: .3;
+    background-image:
+        linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+    background-size: 45px 45px;
+    mask-image: linear-gradient(to bottom, black, transparent 80%);
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.container {
+    width: min(1160px, calc(100% - 40px));
+    margin: auto;
+}
+
+/* NAV */
+
+nav {
+    height: 78px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 10;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: .8px;
+}
+
+.logo-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    background: linear-gradient(135deg, #8b6cff, #6040e8);
+    box-shadow: 0 8px 30px rgba(124,92,255,.35);
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.nav-links a {
+    transition: .2s;
+}
+
+.nav-links a:hover {
+    color: white;
+}
+
+.nav-download {
+    padding: 11px 17px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.07);
+    border: 1px solid var(--border);
+    color: white !important;
+}
+
+/* HERO */
+
+.hero {
+    min-height: 730px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 55px;
+    padding: 70px 0 100px;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 13px;
+    border: 1px solid rgba(124,92,255,.3);
+    border-radius: 999px;
+    background: rgba(124,92,255,.09);
+    color: #c9bfff;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 24px;
+}
+
+.badge-dot {
+    width: 7px;
+    height: 7px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--green);
+}
+
+h1 {
+    font-size: clamp(46px, 6vw, 76px);
+    line-height: .98;
+    letter-spacing: -4px;
+    max-width: 650px;
+}
+
+.gradient {
+    background: linear-gradient(100deg, #fff 15%, #a991ff 70%, #7255ff);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.hero-text {
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.75;
+    max-width: 540px;
+    margin-top: 25px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 13px;
+    margin-top: 34px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 15px 21px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    transition: .25s;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #8b70ff, #6446e9);
+    box-shadow: 0 12px 35px rgba(124,92,255,.28);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 45px rgba(124,92,255,.4);
+}
+
+.btn-secondary {
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.045);
+    color: #d9dbe2;
+}
+
+.btn-secondary:hover {
+    background: rgba(255,255,255,.08);
+    transform: translateY(-2px);
+}
+
+.hero-note {
+    color: #686c78;
+    font-size: 11px;
+    margin-top: 14px;
+}
+
+/* APP MOCKUP */
+
+.mockup-wrap {
+    position: relative;
+    perspective: 1200px;
+}
+
+.glow {
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    background: #7455ff;
+    filter: blur(120px);
+    opacity: .18;
+    top: 20%;
+    left: 20%;
+}
+
+.mockup {
+    position: relative;
+    border: 1px solid rgba(255,255,255,.13);
+    background: rgba(15,16,23,.88);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transform: rotateY(-7deg) rotateX(3deg);
+    transition: transform .6s ease;
+}
+
+.mockup-wrap:hover .mockup {
+    transform: rotateY(-2deg) rotateX(1deg) translateY(-5px);
+}
+
+.window-top {
+    height: 42px;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    background: #11121a;
+}
+
+.window-dots {
+    display: flex;
+    gap: 6px;
+}
+
+.window-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #444753;
+}
+
+.window-title {
+    margin-left: auto;
+    margin-right: auto;
+    color: #858996;
+    font-size: 10px;
+}
+
+.app-body {
+    display: grid;
+    grid-template-columns: 115px 1fr;
+    min-height: 390px;
+}
+
+.app-sidebar {
+    padding: 15px 10px;
+    border-right: 1px solid rgba(255,255,255,.06);
+    background: #101118;
+}
+
+.side-logo {
+    font-size: 10px;
+    font-weight: 800;
+    margin: 7px 8px 25px;
+}
+
+.side-item {
+    padding: 10px 9px;
+    color: #777b87;
+    border-radius: 7px;
+    font-size: 9px;
+    margin-bottom: 4px;
+}
+
+.side-item.active {
+    background: rgba(124,92,255,.15);
+    color: #b9aaff;
+}
+
+.app-content {
+    padding: 25px;
+}
+
+.app-heading {
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.app-subheading {
+    margin-top: 6px;
+    color: #6e727e;
+    font-size: 9px;
+}
+
+.app-card {
+    margin-top: 22px;
+    border: 1px solid rgba(255,255,255,.07);
+    background: rgba(255,255,255,.025);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.app-sticker {
+    font-size: 29px;
+}
+
+.app-name {
+    font-size: 17px;
+    font-weight: 800;
+    margin-top: 10px;
+}
+
+.app-desc {
+    font-size: 8px;
+    color: #737783;
+    margin-top: 5px;
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 15px;
+    color: #39e58c;
+    font-size: 8px;
+}
+
+.status::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #39e58c;
+    box-shadow: 0 0 8px #39e58c;
+}
+
+.app-stats {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.stat {
+    padding: 13px;
+    border-radius: 9px;
+    background: rgba(255,255,255,.035);
+    border: 1px solid rgba(255,255,255,.06);
+}
+
+.stat-label {
+    color: #656975;
+    font-size: 7px;
+}
+
+.stat-value {
+    margin-top: 6px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* SECTION */
+
+section {
+    padding: 110px 0;
+}
+
+.section-head {
+    text-align: center;
+    max-width: 650px;
+    margin: auto;
+}
+
+.eyebrow {
+    color: #9c88ff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 10px;
+    font-weight: 800;
+    margin-bottom: 14px;
+}
+
+.section-title {
+    font-size: clamp(32px, 4vw, 48px);
+    letter-spacing: -2px;
+}
+
+.section-description {
+    color: var(--muted);
+    line-height: 1.7;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+/* FEATURES */
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 14px;
+    margin-top: 55px;
+}
+
+.feature {
+    padding: 26px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    border-radius: 16px;
+    transition: .25s;
+}
+
+.feature:hover {
+    transform: translateY(-5px);
+    background: var(--card-hover);
+    border-color: rgba(124,92,255,.25);
+}
+
+.feature-icon {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+    background: rgba(124,92,255,.12);
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.feature h3 {
+    font-size: 15px;
+}
+
+.feature p {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+    margin-top: 9px;
+}
+
+/* STATS */
+
+.numbers {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+}
+
+.number {
+    text-align: center;
+    padding: 38px 15px;
+    border-right: 1px solid var(--border);
+}
+
+.number:last-child {
+    border: none;
+}
+
+.number strong {
+    display: block;
+    font-size: 32px;
+    letter-spacing: -1px;
+}
+
+.number span {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 7px;
+}
+
+/* THEMES */
+
+.themes {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 12px;
+    margin-top: 45px;
+}
+
+.theme {
+    padding: 17px;
+    border-radius: 13px;
+    border: 1px solid var(--border);
+    background: var(--card);
+}
+
+.theme-preview {
+    height: 60px;
+    border-radius: 9px;
+    margin-bottom: 13px;
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-preview::after {
+    content: "";
+    position: absolute;
+    width: 45%;
+    height: 100%;
+    background: rgba(255,255,255,.1);
+    left: 0;
+    top: 0;
+}
+
+.theme-name {
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* DOWNLOAD */
+
+.download-section {
+    padding-bottom: 130px;
+}
+
+.download-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(124,92,255,.25);
+    border-radius: 25px;
+    padding: 65px;
+    text-align: center;
+    background:
+        radial-gradient(circle at 50% 100%, rgba(124,92,255,.2), transparent 55%),
+        rgba(124,92,255,.055);
+}
+
+.download-card::before {
+    content: "";
+    position: absolute;
+    width: 500px;
+    height: 200px;
+    background: rgba(124,92,255,.15);
+    filter: blur(90px);
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -100px;
+}
+
+.download-card > * {
+    position: relative;
+}
+
+.download-card h2 {
+    font-size: clamp(30px, 4vw, 47px);
+    letter-spacing: -2px;
+}
+
+.download-card p {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 14px auto 27px;
+    max-width: 500px;
+    line-height: 1.7;
+}
+
+/* FOOTER */
+
+footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 0;
+}
+
+.footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #696d79;
+    font-size: 11px;
+}
+
+.footer-brand {
+    color: #a2a5af;
+    font-weight: 700;
+}
+
+/* ANIMATION */
+
+.reveal {
+    opacity: 0;
+    transform: translateY(25px);
+    transition: opacity .7s ease, transform .7s ease;
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+    .hero {
+        grid-template-columns: 1fr;
+        padding-top: 45px;
+    }
+
+    .mockup {
+        transform: none;
+        max-width: 650px;
+        margin: auto;
+    }
+
+    .features {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .themes {
+        grid-template-columns: repeat(2,1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .container {
+        width: min(100% - 28px, 1160px);
+    }
+
+    nav {
+        height: 68px;
+    }
+
+    .nav-links a:not(.nav-download) {
+        display: none;
+    }
+
+    h1 {
+        font-size: 48px;
+        letter-spacing: -3px;
+    }
+
+    .hero {
+        min-height: auto;
+        padding: 55px 0 70px;
+    }
+
+    .hero-text {
+        font-size: 14px;
+    }
+
+    .features {
+        grid-template-columns: 1fr;
+    }
+
+    .numbers {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .number:nth-child(2) {
+        border-right: none;
+    }
+
+    .number:nth-child(-n+2) {
+        border-bottom: 1px solid var(--border);
+    }
+
+    .themes {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .download-card {
+        padding: 42px 20px;
+    }
+
+    .app-body {
+        grid-template-columns: 82px 1fr;
+    }
+
+    .app-content {
+        padding: 17px;
+    }
+
+    .footer-inner {
+        gap: 10px;
+        flex-direction: column;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="container">
+        <nav>
+            <a href="#" class="logo">
+                <span class="logo-icon">⚡</span>
+                <span>SCRIMS CLICKER</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="#features">Возможности</a>
+                <a href="#themes">Темы</a>
+                <a href="#download" class="nav-download">Скачать</a>
+            </div>
+        </nav>
+    </div>
+</header>
+
+
+<main>
+
+<!-- HERO -->
+<section class="hero container">
+
+    <div class="hero-copy reveal">
+
+        <div class="badge">
+            <span class="badge-dot"></span>
+            WINDOWS · ДО 1000 CPS
+        </div>
+
+        <h1>
+            Клики.<br>
+            Быстро.<br>
+            <span class="gradient">Под твоим контролем.</span>
+        </h1>
+
+        <p class="hero-text">
+            Scrims Clicker — быстрый и удобный Windows автокликер
+            с настраиваемым CPS, горячими клавишами, аварийной
+            остановкой и множеством визуальных тем.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="Scrims-Clicker.exe" download class="btn btn-primary">
+                ↓ &nbsp; Скачать для Windows
+            </a>
+
+            <a href="#features" class="btn btn-secondary">
+                Узнать больше
+            </a>
+        </div>
+
+        <div class="hero-note">
+            Windows · F6 старт · F7 стоп · ESC экстренная остановка
+        </div>
+
+    </div>
+
+
+    <div class="mockup-wrap reveal">
+
+        <div class="glow"></div>
+
+        <div class="mockup">
+
+            <div class="window-top">
+                <div class="window-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+
+                <div class="window-title">
+                    Scrims Clicker
+                </div>
+            </div>
+
+            <div class="app-body">
+
+                <aside class="app-sidebar">
+
+                    <div class="side-logo">
+                        ⚡ SCRIMS
+                    </div>
+
+                    <div class="side-item active">
+                        Главная
+                    </div>
+
+                    <div class="side-item">
+                        Настройки
+                    </div>
+
+                    <div class="side-item">
+                        Внешний вид
+                    </div>
+
+                </aside>
+
+                <div class="app-content">
+
+                    <div class="app-heading">
+                        Добро пожаловать
+                    </div>
+
+                    <div class="app-subheading">
+                        Быстрый и удобный Windows автокликер
+                    </div>
+
+                    <div class="app-card">
+
+                        <div class="app-sticker">
+                            ⚡
+                        </div>
+
+                        <div class="app-name">
+                            Scrims Clicker
+                        </div>
+
+                        <div class="app-desc">
+                            Левый клик • до 1000 CPS
+                        </div>
+
+                        <div class="status">
+                            Автокликер остановлен
+                        </div>
+
+                        <div class="app-stats">
+
+                            <div class="stat">
+                                <div class="stat-label">
+                                    ТЕКУЩИЙ CPS
+                                </div>
+
+                                <div class="stat-value">
+                                    20
+                                </div>
+                            </div>
+
+                            <div class="stat">
+                                <div class="stat-label">
+                                    СТАРТ
+                                </div>
+
+                                <div class="stat-value">
+                                    F6
+                                </div>
+                            </div>
+
+                            <div class="stat">
+                                <div class="stat-label">
+                                    СТОП
+                                </div>
+
+                                <div class="stat-value">
+                                    F7
+                                </div>
+                            </div>
+
+                            <div class="stat">
+                                <div class="stat-label">
+                                    EMERGENCY
+                                </div>
+
+                                <div class="stat-value">
+                                    ESC
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- NUMBERS -->
+<div class="container">
+    <div class="numbers reveal">
+
+        <div class="number">
+            <strong>1000</strong>
+            <span>максимальный CPS</span>
+        </div>
+
+        <div class="number">
+            <strong>20+</strong>
+            <span>визуальных тем</span>
+        </div>
+
+        <div class="number">
+            <strong>F6 / F7</strong>
+            <span>горячие клавиши</span>
+        </div>
+
+        <div class="number">
+            <strong>ESC</strong>
+            <span>аварийная остановка</span>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- FEATURES -->
+<section id="features">
+
+    <div class="container">
+
+        <div class="section-head reveal">
+
+            <div class="eyebrow">
+                Возможности
+            </div>
+
+            <h2 class="section-title">
+                Всё необходимое. Ничего лишнего.
+            </h2>
+
+            <p class="section-description">
+                Интерфейс создан для быстрого управления автокликером
+                без лишних сложностей.
+            </p>
+
+        </div>
+
+
+        <div class="features">
+
+            <div class="feature reveal">
+                <div class="feature-icon">⚡</div>
+                <h3>До 1000 CPS</h3>
+                <p>
+                    Настрой скорость кликов от 1 до 1000 CPS
+                    под свои задачи.
+                </p>
+            </div>
+
+            <div class="feature reveal">
+                <div class="feature-icon">⌨</div>
+                <h3>Свои hotkeys</h3>
+                <p>
+                    Назначай собственные клавиши запуска
+                    и остановки автокликера.
+                </p>
+            </div>
+
+            <div class="feature reveal">
+                <div class="feature-icon">🛑</div>
+                <h3>Emergency ESC</h3>
+                <p>
+                    Клавиша ESC позволяет мгновенно остановить
+                    процесс кликов.
+                </p>
+            </div>
+
+            <div class="feature reveal">
+                <div class="feature-icon">🎨</div>
+                <h3>20+ тем</h3>
+                <p>
+                    Тёмная, неоновая, ледяная, космическая,
+                    градиентные и другие темы.
+                </p>
+            </div>
+
+            <div class="feature reveal">
+                <div class="feature-icon">💾</div>
+                <h3>Сохранение настроек</h3>
+                <p>
+                    CPS, горячие клавиши и выбранная тема
+                    сохраняются автоматически.
+                </p>
+            </div>
+
+            <div class="feature reveal">
+                <div class="feature-icon">◈</div>
+                <h3>Простой интерфейс</h3>
+                <p>
+                    Главная, настройки и внешний вид —
+                    всё находится под рукой.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- THEMES -->
+<section id="themes">
+
+    <div class="container">
+
+        <div class="section-head reveal">
+
+            <div class="eyebrow">
+                Внешний вид
+            </div>
+
+            <h2 class="section-title">
+                Твой стиль. Твоя тема.
+            </h2>
+
+            <p class="section-description">
+                В приложении доступно более двадцати вариантов
+                оформления интерфейса.
+            </p>
+
+        </div>
+
+
+        <div class="themes">
+
+            <div class="theme reveal">
+                <div class="theme-preview"
+                     style="background:linear-gradient(135deg,#17191f,#090a0d)">
+                </div>
+                <div class="theme-name">Тёмная</div>
+            </div>
+
+            <div class="theme reveal">
+                <div class="theme-preview"
+                     style="background:linear-gradient(135deg,#272b33,#101218)">
+                </div>
+                <div class="theme-name">Графит</div>
+            </div>
+
+            <div class="theme reveal">
+                <div class="theme-preview"
+                     style="background:linear-gradient(135deg,#1766bd,#091b38)">
+                </div>
+                <div class="theme-name">Синяя</div>
+            </div>
+
+            <div class="theme reveal">
+                <div class="theme-preview"
+                     style="background:linear-gradient(135deg,#804de0,#21103c)">
+                </div>
+                <div class="theme-name">Фиолетовая</div>
+            </div>
+
+            <div class="theme reveal">
+                <div class="theme-preview"
+                     style="background:linear-gradient(135deg,#15966a,#092f24)">
+                </div>
+                <div class="theme-name">Изумрудная</div>
+            </div>
+
+            <div class="theme reveal">
+                <div class="theme-preview"
+                     style="background:linear-gradient(135deg,#d74352,#3b1118)">
+                </div>
+                <div class="theme-name">Красная</div>
+            </div>
+
+            <div class="theme reveal">
+                <div class="theme-preview"
+                     style="background:linear-gradient(135deg,#ff8b27,#48200b)">
+                </div>
+                <div class="theme-name">Оранжевая</div>
+            </div>
+
+            <div class="theme reveal">
+                <div class="theme-preview"
+                     style="background:linear-gradient(135deg,#ef5f9f,#421329)">
+                </div>
+                <div class="theme-name">Розовая</div>
+            </div>
+
+            <div class="theme reveal">
+                <div class="theme-preview"
+                     style="background:linear-gradient(135deg,#1bb9bc,#083337)">
+                </div>
+                <div class="theme-name">Бирюзовая</div>
+            </div>
+
+            <div class="theme reveal">
+                <div class="theme-preview"
+                     style="background:linear-gradient(135deg,#e2b63e,#3e2b08)">
+                </div>
+                <div class="theme-name">Золотая</div>
+            </div>
+
+            <div class="theme reveal">
+                <div class="theme-preview"
+                     style="background:linear-gradient(135deg,#91d8ff,#162f48)">
+                </div>
+                <div class="theme-name">Ледяная</div>
+            </div>
+
+            <div class="theme reveal">
+                <div class="theme-preview"
+                     style="background:linear-gradient(135deg,#00eaff,#c000ff)">
+                </div>
+                <div class="theme-name">Неоновая</div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- DOWNLOAD -->
+<section id="download" class="download-section">
+
+    <div class="container">
+
+        <div class="download-card reveal">
+
+            <div class="eyebrow">
+                Scrims Clicker
+            </div>
+
+            <h2>
+                Готов к быстрым кликам?
+            </h2>
+
+            <p>
+                Скачай Scrims Clicker для Windows и настрой
+                автокликер под себя.
+            </p>
+
+            <a href="Scrims-Clicker.exe" download class="btn btn-primary">
+                ↓ &nbsp; Скачать Scrims Clicker
+            </a>
+
+            <div class="hero-note">
+                Windows · Scrims-Clicker.exe
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<footer>
+
+    <div class="container">
+
+        <div class="footer-inner">
+
+            <div class="footer-brand">
+                ⚡ SCRIMS CLICKER
+            </div>
+
+            <div>
+                Быстрый и удобный Windows автокликер
+            </div>
+
+            <div>
+                © 2026
+            </div>
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<script>
+const elements = document.querySelectorAll(".reveal");
+
+const observer = new IntersectionObserver(
+    entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+                observer.unobserve(entry.target);
+            }
+        });
+    },
+    {
+        threshold: 0.12
+    }
+);
+
+elements.forEach(el => observer.observe(el));
+
+
+/* небольшая анимация CPS в макете */
+const cps = document.querySelector(".stat-value");
+
+let value = 20;
+
+setInterval(() => {
+    if (!cps) return;
+
+    value += Math.floor(Math.random() * 5) - 2;
+
+    if (value < 17) value = 17;
+    if (value > 24) value = 24;
+
+    cps.textContent = value;
+}, 900);
+</script>
+
+</body>
+</html>
